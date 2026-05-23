@@ -214,3 +214,6 @@ data/*
 data/embedding_tensors/*
 # Finally, un-ignore the specific safetensors file
 !data/embedding_tensors/all_recipes_image_text_embeddings.safetensors
+qdrant_storage
+.vscode
+data

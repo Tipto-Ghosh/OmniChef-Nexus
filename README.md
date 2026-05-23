@@ -19,3 +19,14 @@ OmniChef-VL-RAG is a multimodal retrieval-augmented generation (RAG) system desi
 
 * Overall pipeline:
   Dataset -> pdf+image doc -> embedding -> store -> retrive -> re-rank -> generation based on user query
+
+
+**Docker command that needs to do before start**
+# Start Qdrant (after PC restart etc.)
+docker compose up -d
+
+# Stop Qdrant
+docker compose down
+
+# Check status
+docker ps

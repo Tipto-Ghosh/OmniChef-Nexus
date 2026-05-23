@@ -3,14 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from PIL import Image
 
-from retrieval.config import (
-    FIGURE_HEIGHT,
-    AXES_PER_RESULT_WIDTH,
-    MARKDOWN_SNIPPET_CHARS,
-    MARKDOWN_WRAP_WIDTH,
-    MARKDOWN_FONT_SIZE,
-)
-
+from retrieval.config import FIGURE_HEIGHT,AXES_PER_RESULT_WIDTH,MARKDOWN_SNIPPET_CHARS,MARKDOWN_WRAP_WIDTH,MARKDOWN_FONT_SIZE
 
 def display_results(
     results: list[dict],
@@ -47,7 +40,7 @@ def display_results(
     )
 
     for i, r in enumerate(results):
-        # image panel 
+        # image panel
         ax_img = fig.add_subplot(gs[0, i])
 
         pil_img: Image.Image | None = r.get("image")
@@ -62,12 +55,27 @@ def display_results(
             )
 
         ax_img.axis("off")
-        ax_img.set_title(
-            f"#{r['rank']}  score: {r['score']:.4f}\n[id: {r['index']}]",
-            fontsize=10,
-        )
 
-        #  markdown snippet panel 
+        # Accept either key: pipeline.py uses "rerank_score", retriever uses "score"
+        rerank_score    = r.get("rerank_score")
+        retrieval_score = r.get("retrieval_score") or r.get("score")
+
+        if rerank_score is not None and retrieval_score is not None:
+            # came from pipeline.retrieve_and_rerank — show both scores
+            title_str = (
+                f"#{r['rank']}  rerank: {rerank_score:.4f}\n"
+                f"retrieval: {retrieval_score:.4f}  [id: {r['index']}]"
+            )
+        elif rerank_score is not None:
+            title_str = f"#{r['rank']}  rerank: {rerank_score:.4f}\n[id: {r['index']}]"
+        elif retrieval_score is not None:
+            title_str = f"#{r['rank']}  score: {retrieval_score:.4f}\n[id: {r['index']}]"
+        else:
+            title_str = f"#{r['rank']}  [id: {r['index']}]"
+
+        ax_img.set_title(title_str, fontsize=9)
+
+        # markdown snippet panel 
         ax_txt = fig.add_subplot(gs[1, i])
         ax_txt.axis("off")
 
